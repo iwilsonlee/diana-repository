@@ -1,0 +1,39 @@
+configurations {
+  /*
+  自定义Configuration名称，可通过dependencies()方法向myDependency中加入实际的依赖项
+  */
+    proviedlib
+    compile {
+        extendsFrom proviedlib  //compile继承proviedlib
+    }
+}
+dependencies {
+
+  proviedlib(
+    libraries.'servlet-api',
+    libraries.'ehcache-core',
+    libraries.'slf4j-api',
+    libraries.'slf4j-jdk14',
+    libraries.'jgroups',
+    libraries.'backport-util-concurrent'
+    )
+
+  compile(
+    "cmwebgame-ext:cmweb-dao:1.0",
+    "cmwebgame-ext:beauty-core:1.0"
+    )
+
+  testCompile(libraries.'junit',"cmwebgame-ext:cmweb-dao:1.0")
+}
+
+eclipse{
+    project {
+      buildCommand 'org.eclipse.jdt.core.javabuilder'
+      natures 'org.springsource.ide.eclipse.gradle.core.nature','org.eclipse.jdt.core.javanature'
+    }
+    classpath{
+      //defaultOutputDir = file('build/classes')
+      noExportConfigurations += [configurations.proviedlib]
+      containers 'org.eclipse.jdt.launching.JRE_CONTAINER', 'org.springsource.ide.eclipse.gradle.classpathcontainer'
+    }
+}

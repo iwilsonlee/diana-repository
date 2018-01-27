@@ -1,5 +1,6 @@
 package com.cmwebgame.dao.portal;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -137,13 +138,24 @@ public class ApportionmentDao extends InitDao<Apportionment> implements
 		conditions.add(month);
 		List<Long> projectIdList = this.getResultSetByCondition(sql, conditions, Long.class);
 		LinkedHashMap<String, List<Apportionment>> map = Maps.newLinkedHashMap();
+//		double total = 0.0;
 		for (Long projectId : projectIdList) {
 			List<Apportionment> apportionments = findByProjectIdAndMonth(projectId, companyId, month);
 			if (apportionments!=null&&apportionments.size()!=0) {
 				map.put(apportionments.get(0).getProjectName(), apportionments);
+//				for(Apportionment a : apportionments){
+//					if(a.getProjectName().equals("业务-唯品国际牛尔")){
+//						System.out.println("==projectId=" + projectId + " | projectName=" + a.getProjectName() + 
+//								" | " + a.getName() + "=" + 
+//								a.getAmount());
+//					}
+//					
+//				}
 			}
 			
 		}
+//		System.out.println("========================");
+//		System.out.println("The companyId=" + companyId + " | total=" + total + " | size=" + map.size());
 		return map;
 	}
 

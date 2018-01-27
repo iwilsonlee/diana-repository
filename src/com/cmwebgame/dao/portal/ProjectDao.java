@@ -52,6 +52,16 @@ public class ProjectDao extends InitDao<Project> implements ProjectManager {
 		List<Project> list = this.getResultSetByCondition(sql, conditions);
 		return (list==null||list.size()==0)?null:list.get(0);
 	}
+	
+	@Override
+	public Project getByName(String name) {
+		// TODO Auto-generated method stub
+		String sql = "select * from project where name=?";
+		List<Object> conditions = Lists.newArrayList();
+		conditions.add(name);		
+		List<Project> list = this.getResultSetByCondition(sql, conditions);
+		return (list==null||list.size()==0)?null:list.get(0);
+	}
 
 	@Override
 	public PageVo<Project> findByPage(int pageNum, int rows) {

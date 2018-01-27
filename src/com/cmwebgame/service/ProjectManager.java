@@ -12,6 +12,8 @@ public interface ProjectManager {
 	
 	public Project getById(Long id);
 	
+	public Project getByName(String name);
+	
 	public PageVo<Project> findByPage(int pageNum, int rows);
 	/**
 	 * 根据查询条件获取项目分页，查询条件是hashmap，key是sql字段名，value是字段值

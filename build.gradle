@@ -1,3 +1,36 @@
+import io.github.cdimascio.dotenv.Dotenv
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+version = '0.2.0'
+group = 'com.github.iwilsonlee'
+def artifactId = project.name
+
+def dotenv = Dotenv.load() // 读取 .env 文件
+task loadEnv {
+    doFirst {
+        dotenv.entries().each { entry ->
+            project.ext[entry.key] = entry.value
+        }
+    }
+}
+tasks.withType(JavaCompile) {
+    dependsOn loadEnv
+}
+
+repositories {
+    // Use jcenter for resolving dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    maven {url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    jcenter()
+    mavenCentral()
+    mavenLocal()
+}
+
 configurations {
   /*
   自定义Configuration名称，可通过dependencies()方法向myDependency中加入实际的依赖项
@@ -7,15 +40,22 @@ configurations {
         extendsFrom proviedlib  //compile继承proviedlib
     }
 }
+
+ext.versions = [
+        jackson   : '1.9.13',
+        logback   : '1.0.13',
+        slf4j     : '1.7.7',
+        httpclient: '4.3.1'
+]
 dependencies {
 
-  proviedlib(
-    libraries.'servlet-api',
-    libraries.'ehcache-core',
-    libraries.'slf4j-api',
-    libraries.'slf4j-jdk14',
-    libraries.'jgroups',
-    libraries.'backport-util-concurrent'
+    compileOnly(
+            "javax.servlet:servlet-api:2.5",
+            "net.sf.ehcache:ehcache-core:2.5.2",
+            "org.slf4j:slf4j-api:${versions.slf4j}",
+            "org.slf4j:slf4j-jdk14:${versions.slf4j}",
+            "jgroups:jgroups:2.10.0.Beta2",
+            "backport-util-concurrent:backport-util-concurrent:3.1"
     )
 
   compile(
@@ -23,17 +63,59 @@ dependencies {
     "cmwebgame-ext:beauty-core:1.0"
     )
 
-  testCompile(libraries.'junit',"cmwebgame-ext:cmweb-dao:1.0")
+  testCompile('junit:junit:4.12',"cmwebgame-ext:cmweb-dao:1.0")
 }
 
-eclipse{
-    project {
-      buildCommand 'org.eclipse.jdt.core.javabuilder'
-      natures 'org.springsource.ide.eclipse.gradle.core.nature','org.eclipse.jdt.core.javanature'
+// eclipse{
+//     project {
+//       buildCommand 'org.eclipse.jdt.core.javabuilder'
+//       natures 'org.springsource.ide.eclipse.gradle.core.nature','org.eclipse.jdt.core.javanature'
+//     }
+//     classpath{
+//       //defaultOutputDir = file('build/classes')
+//       noExportConfigurations += [configurations.proviedlib]
+//       containers 'org.eclipse.jdt.launching.JRE_CONTAINER', 'org.springsource.ide.eclipse.gradle.classpathcontainer'
+//     }
+// }
+
+def aliMavenUsername = dotenv.get("ALI_MAVEN_USERNAME")
+def aliMavenPassword = dotenv.get("ALI_MAVEN_PASSWORD")
+
+apply plugin: 'maven'
+uploadArchives {
+    repositories {
+        mavenLocal()
+        mavenDeployer {
+            repository(url: 'https://packages.aliyun.com/5ef8675887f8da7d5e937585/maven/repo-yyxnv') {
+                authentication(
+                        userName: "$aliMavenUsername",
+                        password: "$aliMavenPassword"
+                )
+            }
+            pom.version = "$project.version"
+            pom.artifactId = "$artifactId"
+            pom.groupId = "$project.group"
+        }
     }
-    classpath{
-      //defaultOutputDir = file('build/classes')
-      noExportConfigurations += [configurations.proviedlib]
-      containers 'org.eclipse.jdt.launching.JRE_CONTAINER', 'org.springsource.ide.eclipse.gradle.classpathcontainer'
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        flatDir {
+            dirs 'libs'
+        }
+        maven {
+            url "https://mvn.cloud.alipay.com/nexus/content/repositories/open/"
+        }
+        maven{url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+        maven{url 'http://maven.aliyun.com/nexus/content/repositories/google'}
+        maven {
+            credentials {
+                username "$aliMavenUsername"
+                password "$aliMavenPassword"
+            }
+            url 'https://packages.aliyun.com/5ef8675887f8da7d5e937585/maven/repo-yyxnv'
+        }
     }
 }

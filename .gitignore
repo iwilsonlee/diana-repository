@@ -4,3 +4,9 @@
 /.project
 /firestorm.log
 /nohup.out
+.settings
+.gradle
+.idea
+.classpath
+.project
+.env

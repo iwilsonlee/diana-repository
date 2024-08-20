@@ -2,6 +2,7 @@ package com.cmwebgame.util;
 
 import static org.junit.Assert.*;
 
+import com.cmwebgame.util.DataTimeUtil;
 import org.joda.time.DateTime;
 import org.junit.Test;
 

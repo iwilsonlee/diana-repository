@@ -7,20 +7,14 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 import com.cmwebgame.connection.ConnectionManager;
 import com.cmwebgame.dao.portal.DepartmentDao;
 import com.cmwebgame.dao.portal.EmployeeDao;
-import com.cmwebgame.dao.portal.ModuleDao;
 import com.cmwebgame.entities.Employee;
 import com.cmwebgame.entities.vo.DepartmentV;
-import com.cmwebgame.entities.vo.EmployeeV;
-import com.cmwebgame.entities.vo.ModuleV;
-import com.cmwebgame.entities.vo.PageVo;
 import com.cmwebgame.service.DepartmentManager;
 import com.cmwebgame.service.EmployeeManager;
-import com.cmwebgame.service.ModuleManager;
 
 public class TestDepartmentDao {
 	
